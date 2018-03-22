@@ -49,7 +49,7 @@ docker images
 
 
 
-# run another container, accepting the EULA
+# run a container
 docker run -d -p 15111:1433 `
     --env ACCEPT_EULA=Y `
         --env SA_PASSWORD=Testing1122 `
@@ -81,7 +81,7 @@ docker exec -it testcontainer1 bash
 
 
 # copy a backup file into the container
-$filepath = "C:\Git\PrivateCodeRepo\ContainerDemos\DatabaseBackup"
+$filepath = "C:\Git\dbafromthecold\ContainersAndClonesDemo\DatabaseBackup"
 docker cp $filepath\DatabaseA.bak `
         testcontainer1:'/var/opt/mssql/data/'
 
