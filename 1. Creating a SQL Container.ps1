@@ -1,11 +1,10 @@
 # Pre-requisites
 Install-Module CredentialManager -Force
 Install-Module dbatools -Force
-Install-Module sqlserver -Force
 
 Import-Module CredentialManager
 Import-Module dbatools
-Import-Module sqlserver 
+
 
 Get-Module 
 
@@ -16,9 +15,11 @@ Set-Location C:\
 $cred = Get-StoredCredential -Target "SqlDocker"
 
 if (!$cred){
-    New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist LocalMachine
+    New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist Session
 }
 
+
+Get-StoredCredential -Target "SqlDocker"
 
 # https://dbafromthecold.com/2016/11/16/sql-server-containers-part-one/
 
@@ -51,8 +52,9 @@ docker images
 # run another container, accepting the EULA
 docker run -d -p 15111:1433 `
     --env ACCEPT_EULA=Y `
-        --env SA_PASSWORD=Testing11@@ `
-            --name testcontainer1 microsoft/mssql-server-linux:latest
+        --env SA_PASSWORD=Testing1122 `
+            --name testcontainer1 `
+                microsoft/mssql-server-linux:latest
 
 
 
@@ -67,12 +69,9 @@ docker logs testcontainer1
 
 
 # check version of SQL
-$srv = Connect-DbaInstance 'localhost,15111' -Credential $cred
-    $srv.Information
-    $srv.Edition
-    $srv.HostDistribution
-    $srv.HostPlatform
-    $srv.Version
+Connect-DbaInstance -SqlInstance 'localhost,15111' -Credential $cred `
+    | Select-Object Product, HostDistribution, HostPlatform, Version
+
 
 
 
@@ -82,12 +81,12 @@ docker exec -it testcontainer1 bash
 
 
 # copy a backup file into the container
-docker cp C:\Git\dbafromthecold\VisualStudioCode\ContainerDemos\DatabaseBackup\DatabaseA.bak `
+$filepath = "C:\Git\PrivateCodeRepo\ContainerDemos\DatabaseBackup"
+docker cp $filepath\DatabaseA.bak `
         testcontainer1:'/var/opt/mssql/data/'
 
 
  
-
 # check that the backup file is there
 docker exec -it testcontainer1 bash
 
@@ -103,9 +102,18 @@ Restore-DbaDatabase -SqlInstance 'localhost,15111' `
             
 
 # check databases in container
-$srv = Connect-DbaInstance 'localhost,15111' -Credential $cred
-    $srv.Databases
+Get-DbaDatabase -SqlInstance 'localhost,15111' -SqlCredential $Cred `
+    | Select-Object Name  
 
+
+
+# have a look at the system stats
+docker system df --verbose
+
+
+
+# stats on container usage
+docker stats
 
 
 

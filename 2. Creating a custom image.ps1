@@ -1,11 +1,10 @@
 # Pre-requisites
 Install-Module CredentialManager -Force
 Install-Module dbatools -Force
-Install-Module sqlserver -Force
 
 Import-Module CredentialManager
 Import-Module dbatools
-Import-Module sqlserver 
+
 
 Get-Module 
 
@@ -33,9 +32,9 @@ docker images
 
 
 
-# build another custom image from second dockerfile
-docker build -t testimage1 `
-    "C:\Git\PrivateCodeRepo\ContainerDemos\Dockerfiles\Dockerfile2"
+# build custom image
+$Filepath = "C:\Git\PrivateCodeRepo\ContainerDemos\Dockerfiles"
+docker build -t testimage1 $Filepath\Dockerfile2
 
 
 
@@ -56,18 +55,14 @@ docker ps -a
 
 
 # check databases in container
-$srv = Connect-DbaInstance 'localhost,15666' -Credential $cred
-    $srv.Databases
+Get-DbaDatabase -SqlInstance 'localhost,15555' -SqlCredential $Cred `
+    | Select-Object Name
 
 
 
 # check version of SQL
-$srv = Connect-DbaInstance 'localhost,15666' -Credential $cred
-    $srv.Information
-    $srv.Edition
-    $srv.HostDistribution
-    $srv.HostPlatform
-    $srv.Version
+Connect-DbaInstance -SqlInstance 'localhost,15666' -Credential $cred `
+    | Select-Object Product, HostDistribution, HostPlatform, Version, Edition
 
 
 
