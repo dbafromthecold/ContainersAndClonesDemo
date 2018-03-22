@@ -45,7 +45,8 @@ docker images
 
 # run container from second custom image
 docker run -d -p 15666:15666 `
-    --name testcontainer2 testimage1
+    --name testcontainer2 `
+        testimage1
 
 
 
