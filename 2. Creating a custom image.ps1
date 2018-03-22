@@ -27,14 +27,9 @@ docker images
 
 
 
-# check image is in local repository
-docker images
-
-
-
 # build custom image
-$Filepath = "C:\Git\PrivateCodeRepo\ContainerDemos\Dockerfiles"
-docker build -t testimage1 $Filepath\Dockerfile2
+$Filepath = "C:\Git\dbafromthecold\ContainersAndClonesDemo\"
+docker build -t testimage1 $Filepath\Dockerfile
 
 
 
@@ -56,7 +51,7 @@ docker ps -a
 
 
 # check databases in container
-Get-DbaDatabase -SqlInstance 'localhost,15555' -SqlCredential $Cred `
+Get-DbaDatabase -SqlInstance 'localhost,15666' -SqlCredential $Cred `
     | Select-Object Name
 
 

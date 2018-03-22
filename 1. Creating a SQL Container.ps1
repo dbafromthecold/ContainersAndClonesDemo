@@ -107,11 +107,6 @@ Get-DbaDatabase -SqlInstance 'localhost,15111' -SqlCredential $Cred `
 
 
 
-# have a look at the system stats
-docker system df --verbose
-
-
-
 # stats on container usage
 docker stats
 

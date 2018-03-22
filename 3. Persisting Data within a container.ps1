@@ -158,6 +158,12 @@ docker rm testcontainer4
 ## Named Volumes
 
 
+
+# remove unused volumes
+docker volume prune
+
+
+
 # create the named volume
 docker volume create sqlserver
 
@@ -206,7 +212,7 @@ $db = Get-DbaDatabase -SqlInstance 'localhost,15999' -Database 'DatabaseE' -SqlC
 
 # query the test table
 $db = Get-DbaDatabase -SqlInstance 'localhost,15999' -Database 'DatabaseE' -SqlCredential $Cred
-    $db.Query("SELECT COUNT(*) AS Records FROM dbo.TestTable2") 
+    $db.Query("SELECT COUNT(*) AS Records FROM dbo.TestTable2")
 
 
 
