@@ -1,11 +1,10 @@
 # Pre-requisites
 Install-Module CredentialManager -Force
 Install-Module dbatools -Force
-Install-Module sqlserver -Force
 
 Import-Module CredentialManager
 Import-Module dbatools
-Import-Module sqlserver 
+
 
 Get-Module 
 
@@ -51,12 +50,7 @@ docker ps -a
 
 
 
-# connect to SQL container
-$srv = Connect-DbaInstance 'localhost,15799' -Credential $cred
-    $srv.Databases
-
-
-        
+       
 # clean up
-docker kill portainer1 testcontainer 
-docker rm portainer1 testcontainer
+docker kill portainer1
+docker rm portainer1
