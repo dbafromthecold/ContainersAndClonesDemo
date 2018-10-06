@@ -18,9 +18,6 @@ if (!$cred){
     New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist Session
 }
 
-
-Get-StoredCredential -Target "SqlDocker"
-
 $cred = Get-StoredCredential -Target "SqlDocker"
 
 # https://dbafromthecold.com/2016/11/16/sql-server-containers-part-one/

@@ -18,6 +18,7 @@ if (!$cred){
     New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist LocalMachine
 }
 
+$cred = Get-StoredCredential -Target "SqlDocker"
 
 # https://dbafromthecold.com/2017/02/08/sql-container-from-dockerfile/
 
@@ -39,9 +40,10 @@ docker images
 
 
 # run container from second custom image
-docker run -d -p 15666:15666 `
-    --name testcontainer2 `
-        testimage1
+docker run -d -p 15666:1433 `
+    --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
+        --name testcontainer2 `
+            testimage1
 
 
 

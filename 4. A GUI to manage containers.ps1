@@ -18,6 +18,7 @@ if (!$cred){
     New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist LocalMachine
 }
 
+$cred = Get-StoredCredential -Target "SqlDocker"
 
 # https://dbafromthecold.com/2017/03/01/a-gui-for-docker-container-administration/
 # https://portainer.io/
