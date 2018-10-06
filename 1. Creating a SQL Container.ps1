@@ -21,6 +21,8 @@ if (!$cred){
 
 Get-StoredCredential -Target "SqlDocker"
 
+$cred = Get-StoredCredential -Target "SqlDocker"
+
 # https://dbafromthecold.com/2016/11/16/sql-server-containers-part-one/
 
 
@@ -40,7 +42,7 @@ docker search microsoft/mssql
 
 
 # pull image down to local repository
-docker pull microsoft/mssql-server-linux:latest
+docker pull mcr.microsoft.com/mssql/server:latest
 
 
 
@@ -54,7 +56,7 @@ docker run -d -p 15111:1433 `
     --env ACCEPT_EULA=Y `
         --env SA_PASSWORD=Testing1122 `
             --name testcontainer1 `
-                microsoft/mssql-server-linux:latest
+                mcr.microsoft.com/mssql/server:latest
 
 
 
