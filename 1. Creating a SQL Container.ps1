@@ -39,7 +39,7 @@ docker search microsoft/mssql
 
 
 # pull image down to local repository
-docker pull mcr.microsoft.com/mssql/server:latest
+docker pull mcr.microsoft.com/mssql/server:vNext-CTP2.0-ubuntu
 
 
 
@@ -53,7 +53,7 @@ docker run -d -p 15111:1433 `
     --env ACCEPT_EULA=Y `
         --env SA_PASSWORD=Testing1122 `
             --name testcontainer1 `
-                mcr.microsoft.com/mssql/server:latest
+                mcr.microsoft.com/mssql/server:vNext-CTP2.0-ubuntu
 
 
 

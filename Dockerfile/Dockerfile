@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/mssql/server:latest
+FROM mcr.microsoft.com/mssql/server:vNext-CTP2.0-ubuntu
 
 RUN mkdir /var/opt/sqlserver
 

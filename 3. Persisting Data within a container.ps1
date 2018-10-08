@@ -44,7 +44,7 @@ docker run -d -p 15999:1433 `
     -v sqlserver:/sqlserver `
         --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
             --name testcontainer3 `
-                mcr.microsoft.com/mssql/server:latest
+                mcr.microsoft.com/mssql/server:vNext-CTP2.0-ubuntu
 
 
 
@@ -99,7 +99,7 @@ docker run -d -p 16100:1433 `
     -v sqlserver:/sqlserver `
         --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
             --name testcontainer4 `
-                mcr.microsoft.com/mssql/server:latest
+                mcr.microsoft.com/mssql/server:vNext-CTP2.0-ubuntu
 
 
 

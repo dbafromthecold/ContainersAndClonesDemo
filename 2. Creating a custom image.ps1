@@ -31,7 +31,7 @@ docker images
 # build custom image
 $Filepath = "C:\Git\dbafromthecold\ContainersAndClonesDemo\"
 docker build -t testimage1 $Filepath\Dockerfile
-
+cl
 
 
 # verify new custom image is in local repository
