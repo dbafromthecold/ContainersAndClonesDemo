@@ -38,8 +38,14 @@ docker search microsoft/mssql
 
 
 
+# view the image tags in the MCR
+$repo = invoke-webrequest https://mcr.microsoft.com/v2/mssql/server/tags/list -UseBasicParsing
+$repo.content
+
+
+
 # pull image down to local repository
-docker pull mcr.microsoft.com/mssql/server:vNext-CTP2.0-ubuntu
+docker pull mcr.microsoft.com/mssql/server:2019-RC1-ubuntu
 
 
 
@@ -53,7 +59,7 @@ docker run -d -p 15111:1433 `
     --env ACCEPT_EULA=Y `
         --env SA_PASSWORD=Testing1122 `
             --name testcontainer1 `
-                mcr.microsoft.com/mssql/server:vNext-CTP2.0-ubuntu
+                mcr.microsoft.com/mssql/server:2019-RC1-ubuntu
 
 
 
@@ -68,26 +74,34 @@ docker logs testcontainer1
 
 
 # check version of SQL
-Connect-DbaInstance -SqlInstance 'localhost,15111' -Credential $cred `
+Connect-DbaInstance -SqlInstance 'localhost,15111' -SqlCredential $cred `
     | Select-Object Product, HostDistribution, HostPlatform, Version
-
-
-
-
-# let's have a look within the container
-docker exec -it testcontainer1 bash
 
 
 
 # copy a backup file into the container
 $filepath = "C:\Git\dbafromthecold\ContainersAndClonesDemo\DatabaseBackup"
-docker cp $filepath\DatabaseA.bak `
-        testcontainer1:'/var/opt/mssql/data/'
+docker cp $filepath\DatabaseA.bak testcontainer1:'/var/opt/mssql/data/'
 
 
  
-# check that the backup file is there
+# exec into container
 docker exec -it testcontainer1 bash
+
+
+
+# navigate to copied file location
+cd /var/opt/mssql/data
+
+
+
+# view files
+ls -al
+
+
+
+# exit container
+exit
 
 
 

@@ -12,13 +12,12 @@ Set-Location C:\
 
 
 # set credentials to connect to SQL instances
-$cred = Get-StoredCredential -Target "SqlDocker"
-
 if (!$cred){
     New-StoredCredential -Target "SqlDocker" -UserName "sa" -Password "Testing1122" -Persist LocalMachine
 }
 
 $cred = Get-StoredCredential -Target "SqlDocker"
+
 
 # https://dbafromthecold.com/2017/02/08/sql-container-from-dockerfile/
 
@@ -31,7 +30,7 @@ docker images
 # build custom image
 $Filepath = "C:\Git\dbafromthecold\ContainersAndClonesDemo\"
 docker build -t testimage1 $Filepath\Dockerfile
-cl
+
 
 
 # verify new custom image is in local repository
@@ -59,7 +58,7 @@ Get-DbaDatabase -SqlInstance 'localhost,15666' -SqlCredential $Cred `
 
 
 # check version of SQL
-Connect-DbaInstance -SqlInstance 'localhost,15666' -Credential $cred `
+Connect-DbaInstance -SqlInstance 'localhost,15666' -SqlCredential $cred `
     | Select-Object Product, HostDistribution, HostPlatform, Version, Edition
 
 

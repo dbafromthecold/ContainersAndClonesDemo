@@ -32,19 +32,24 @@ docker volume prune
 
 
 # create the named volume
-docker volume create sqlserver
+docker volume create mssqlsystem
+docker volume create mssqluser
+
 
 
 # verify named volume is there
 docker volume ls
 
 
+
 # spin up a container with named volume mapped
-docker run -d -p 15999:1433 `
-    -v sqlserver:/sqlserver `
-        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
-            --name testcontainer3 `
-                mcr.microsoft.com/mssql/server:vNext-CTP2.0-ubuntu
+docker container run -d -p 15999:1433 `
+--volume mssqlsystem:/var/opt/mssql `
+--volume mssqluser:/var/opt/sqlserver `
+--env ACCEPT_EULA=Y `
+--env SA_PASSWORD=Testing1122 `
+--name testcontainer3 `
+mcr.microsoft.com/mssql/server:2019-RC1-ubuntu
 
 
 
@@ -54,13 +59,13 @@ docker ps -a
 
 
 # create database on the named volume
-Invoke-Sqlcmd2 -ServerInstance 'localhost,15999' `
-    -Credential $Cred `
-        -Query "CREATE DATABASE [DatabaseC]
-                ON PRIMARY
-                    (NAME = N'DatabaseC', FILENAME = N'/sqlserver/DatabaseC.mdf')
-                LOG ON
-                    (NAME = N'DatabaseC_log', FILENAME = N'/sqlserver/DatabaseC_log.ldf')"
+$Query = "CREATE DATABASE [DatabaseC]
+ON PRIMARY
+(NAME = N'DatabaseC', FILENAME = N'/var/opt/sqlserver/DatabaseC.mdf')
+LOG ON
+(NAME = N'DatabaseC_log', FILENAME = N'/var/opt/sqlserver/DatabaseC_log.ldf')"
+
+Invoke-DbaQuery -SqlInstance 'localhost,15999' -SqlCredential $Cred -Query $Query
 
                 
 
@@ -71,15 +76,14 @@ Get-DbaDatabase -SqlInstance 'localhost,15999' -SqlCredential $Cred `
 
 
 # create a test table and insert some data
-$db = Get-DbaDatabase -SqlInstance 'localhost,15999' -Database 'DatabaseC' -SqlCredential $Cred
-    $db.Query("CREATE TABLE dbo.TestTable(ID INT);")
-        $db.Query("INSERT INTO dbo.TestTable(ID) SELECT TOP 200 1 FROM sys.all_columns")
+$Query = "CREATE TABLE dbo.TestTable(ID INT);INSERT INTO dbo.TestTable(ID) SELECT TOP 200 1 FROM sys.all_columns"
+Invoke-DBaQuery -SqlInstance 'localhost,15999' -Database 'DatabaseC' -SqlCredential $Cred -Query $Query
 
 
 
 # query the test table
-$db = Get-DbaDatabase -SqlInstance 'localhost,15999' -Database 'DatabaseC' -SqlCredential $Cred
-    $db.Query("SELECT COUNT(*) AS Records FROM dbo.TestTable")
+Invoke-DBaQuery -SqlInstance 'localhost,15999' -Database 'DatabaseC' -SqlCredential $Cred `
+-Query  "SELECT COUNT(*) AS Records FROM dbo.TestTable"
 
 
 
@@ -95,12 +99,13 @@ docker volume ls
 
 
 # spin up another container
-docker run -d -p 16100:1433 `
-    -v sqlserver:/sqlserver `
-        --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
-            --name testcontainer4 `
-                mcr.microsoft.com/mssql/server:vNext-CTP2.0-ubuntu
-
+docker container run -d -p 16100:1433 `
+--volume mssqlsystem:/var/opt/mssql `
+--volume mssqluser:/var/opt/sqlserver `
+--env ACCEPT_EULA=Y `
+--env SA_PASSWORD=Testing1122 `
+--name testcontainer4 `
+mcr.microsoft.com/mssql/server:2019-RC1-ubuntu
 
 
 # verify container is running
@@ -108,30 +113,18 @@ docker ps -a
 
 
 
-# now attach the database
-$fileStructure = New-Object System.Collections.Specialized.StringCollection
-    $fileStructure.Add('/sqlserver/DatabaseC.mdf')
-    $filestructure.Add('/sqlserver/DatabaseC_log.ldf')
-
-Mount-DbaDatabase -SqlInstance "localhost,16100" `
-    -Database DatabaseC -SqlCredential $Cred `
-        -FileStructure $fileStructure
-
-
-
 # check database is there
-Get-DbaDatabase -SqlInstance 'localhost,16100' -SqlCredential $Cred `
-    | Select-Object Name 
+Get-DbaDatabase -SqlInstance 'localhost,16100' -SqlCredential $Cred | Select-Object Name 
 
 
 
 # query the test table       
-$db = Get-DbaDatabase -SqlInstance 'localhost,16100' -Database 'DatabaseC' -SqlCredential $Cred
-    $db.Query("SELECT COUNT(*) AS Records FROM dbo.TestTable") 
+Invoke-DbaQuery -SqlInstance 'localhost,16100' -Database 'DatabaseC' -SqlCredential $Cred `
+-Query "SELECT COUNT(*) AS Records FROM dbo.TestTable"
 
 
 
 # clean up
 docker kill testcontainer4
 docker rm testcontainer4
-docker volume rm sqlserver
+docker volume rm mssqlsystem mssqluser

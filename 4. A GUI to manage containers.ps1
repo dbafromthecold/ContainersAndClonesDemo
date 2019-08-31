@@ -41,8 +41,8 @@ docker images
 
 # run a container
 docker run -d -p 9000:9000 `
-    -v "/var/run/docker.sock:/var/run/docker.sock" `
-        --name portainer1 portainer/portainer 
+-v "/var/run/docker.sock:/var/run/docker.sock" `
+--name portainer1 portainer/portainer 
 
 
 
