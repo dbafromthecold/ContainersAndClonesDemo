@@ -40,9 +40,10 @@ docker images
 
 # run container from second custom image
 docker run -d -p 15666:1433 `
-    --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
-        --name testcontainer2 `
-            testimage1
+--env ACCEPT_EULA=Y `
+--env SA_PASSWORD=Testing1122 `
+--name testcontainer2 `
+testimage1
 
 
 
@@ -57,14 +58,7 @@ Get-DbaDatabase -SqlInstance 'localhost,15666' -SqlCredential $Cred `
 
 
 
-# check version of SQL
-Connect-DbaInstance -SqlInstance 'localhost,15666' -SqlCredential $cred `
-    | Select-Object Product, HostDistribution, HostPlatform, Version, Edition
-
-
-
 # clean up
 docker kill testcontainer2
 docker rm testcontainer2
-
 docker rmi testimage1

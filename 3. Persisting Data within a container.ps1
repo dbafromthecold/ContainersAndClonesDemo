@@ -27,7 +27,7 @@ $cred = Get-StoredCredential -Target "SqlDocker"
 
 
 # remove unused volumes
-docker volume prune
+docker volume prune -f
 
 
 
@@ -70,8 +70,7 @@ Invoke-DbaQuery -SqlInstance 'localhost,15999' -SqlCredential $Cred -Query $Quer
                 
 
 # check database is there
-Get-DbaDatabase -SqlInstance 'localhost,15999' -SqlCredential $Cred `
-    | Select-Object Name                         
+Get-DbaDatabase -SqlInstance 'localhost,15999' -SqlCredential $Cred | Select-Object Name                         
 
 
 

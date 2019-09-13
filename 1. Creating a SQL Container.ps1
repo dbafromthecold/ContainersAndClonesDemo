@@ -34,7 +34,7 @@ docker version
 
 
 # search for an image on the docker hub
-docker search microsoft/mssql
+docker search mssql
 
 
 
@@ -56,10 +56,10 @@ docker images
 
 # run a container
 docker run -d -p 15111:1433 `
-    --env ACCEPT_EULA=Y `
-        --env SA_PASSWORD=Testing1122 `
-            --name testcontainer1 `
-                mcr.microsoft.com/mssql/server:2019-RC1-ubuntu
+--env ACCEPT_EULA=Y `
+--env SA_PASSWORD=Testing1122 `
+--name testcontainer1 `
+mcr.microsoft.com/mssql/server:2019-RC1-ubuntu
 
 
 
