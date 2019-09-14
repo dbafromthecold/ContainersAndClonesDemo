@@ -12,12 +12,12 @@ $cred = Get-Credential
 
 
 # set database name
-$Database = "testdatabase4"
+$Database = "testdatabase2"
 
 
 # create image
 New-PSDCImage -SourceSqlInstance Windows10-Jump -DestinationSqlInstance Windows10-Jump `
- -ImageNetworkPath \\windows10-Jump\C$\clones -Database $Database4 -CreateFullBackup `
+ -ImageNetworkPath \\windows10-Jump\C$\clones -Database $Database -CreateFullBackup `
  -SourceSqlCredential $cred -DestinationSqlCredential $cred
 
 
@@ -28,7 +28,7 @@ $clone = New-PSDCClone -SqlInstance Windows10-Jump -CloneName "$($Database)_clon
 
 
 # detach database
-$Query = "EXEC sp_detach_db @dbname = N'$Database'"
+$Query = "EXEC sp_detach_db @dbname = N'$($Database)_clone'"
 Invoke-DBaQuery -SqlInstance 'Windows10-Jump' -Database 'master' -SqlCredential $Cred -Query $Query
 
 
@@ -58,10 +58,10 @@ foreach($file in $files){
 
 
 # spin up container with clone files location
-docker run -d -p 15789:1433 `
+docker run -d -p 15799:1433 `
 --env ACCEPT_EULA=Y --env SA_PASSWORD=Testing1122 `
 -v C:\sqlserver\clone:/opt/sqlserver `
---name testcontainer1 `
+--name testcontainer `
 mcr.microsoft.com/mssql/server:2019-RC1-ubuntu
 
 
@@ -72,13 +72,13 @@ $b = $folder.Length - $a
 
 $CloneLocation = $folder.Substring($a,$b)
 
-$DataPath = "/opt/sqlserver/$CloneLocation/data/$Database.mdf"
-$LogPath = "/opt/sqlserver/$CloneLocation/log/$Database_log.ldf"
+$DataPath = "/opt/sqlserver/$CloneLocation/Data/$Database.mdf"
+$LogPath = "/opt/sqlserver/$CloneLocation/Log/$($Database)_log.ldf"
 
 $fileStructure = New-Object System.Collections.Specialized.StringCollection
     $fileStructure.Add($DataPath)
     $filestructure.Add($LogPath)
 
-Mount-DbaDatabase -SqlInstance "localhost,15789" `
+Mount-DbaDatabase -SqlInstance "localhost,15799" `
     -Database testdatabase -SqlCredential $Cred `
         -FileStructure $fileStructure
